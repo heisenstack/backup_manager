@@ -12,8 +12,28 @@ def log(message):
     with open(LOG_FILE, "a") as f:
         f.write(entry)
 
+SCHEDULES_FILE = "backup_schedules.txt"
+
+def is_valid_schedule(schedule):
+    parts = schedule.strip().split(";")
+    if len(parts) != 3:
+        return False
+    path, time_str, name = parts
+    if not path or not time_str or not name:
+        return False
+    return True
+
 def cmd_create(schedule):
-    print(f"create {schedule}")
+    if not is_valid_schedule(schedule):
+        log(f"Error: malformed schedule: {schedule}")
+        print(f"Error: malformed schedule: {schedule}")
+        return
+
+    with open(SCHEDULES_FILE, "a") as f:
+        f.write(schedule.strip() + "\n")
+
+    log(f"New schedule added: {schedule.strip()}")
+    print(f"Schedule added: {schedule.strip()}")
 
 def cmd_list():
     print("list")
