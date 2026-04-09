@@ -45,8 +45,27 @@ def cmd_create(schedule):
     log(f"New schedule added: {schedule.strip()}")
     print(f"Schedule added: {schedule.strip()}")
 
+
+def read_schedules():
+    with open(SCHEDULES_FILE, "r") as f:
+        lines = f.readlines()
+    return [line.strip() for line in lines if line.strip()]
+    
+
 def cmd_list():
-    print("list")
+    # print("list")
+    try:
+        schedules = read_schedules()
+        log("Show schedules list")
+        if not schedules:
+            print("No schedule found.")
+            return
+        for i, schedule in enumerate(schedules):
+            print(f"{i}: {schedule}")
+
+    except FileNotFoundError:
+        log("Show schedules list: no schedules found")
+        print("No schedule found.")
 
 def cmd_delete(index):
     print(f"delete {index}")
