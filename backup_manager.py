@@ -21,6 +21,16 @@ def is_valid_schedule(schedule):
     path, time_str, name = parts
     if not path or not time_str or not name:
         return False
+
+    time_parts = time_str.split(":")
+    if len(time_parts) != 2:
+        return False
+    hh, mm = time_parts
+    if not hh.isdigit() or not mm.isdigit():
+        return False
+    if not (0 <= int(hh) <= 23 and 0 <= int(mm) <= 59):
+        return False
+
     return True
 
 def cmd_create(schedule):
