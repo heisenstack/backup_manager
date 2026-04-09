@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 
 LOGS_DIR = "./logs"
@@ -11,4 +12,13 @@ def log(message):
     with open(LOG_FILE, "a") as f:
         f.write(entry)
 
-log("Hello world!")
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python3 backup_manager.py <command>")
+        return
+
+    command = sys.argv[1]
+    print(f"{command}")
+
+if __name__ == "__main__":
+    main()
