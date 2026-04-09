@@ -67,8 +67,32 @@ def cmd_list():
         log("Show schedules list: no schedules found")
         print("No schedule found.")
 
-def cmd_delete(index):
-    print(f"delete {index}")
+def write_schedules(schedules):
+    with open(SCHEDULES_FILE, "w") as f:
+        for schedule in schedules:
+            f.write(schedule + "\n")
+
+def cmd_delete(index_str):
+    try:
+        index = int(index_str)
+    except ValueError:
+        log(f"Error: invalid index: {index_str}")
+        print(f"Error: invalid index: {index_str}")
+        return
+
+    try:
+        schedules = read_schedules()
+        if index < 0 or index >= len(schedules):
+            log(f"Error: can't find schedule at index {index}")
+            print(f"Error: can't find schedule at index {index}")
+            return
+        schedules.pop(index)
+        write_schedules(schedules)
+        log(f"Schedule at index {index} deleted")
+        print(f"Schedule at index {index} deleted.")
+    except FileNotFoundError:
+        log("Error: can't find backup_schedules.txt")
+        print("Error: can't find backup_schedules.txt")
 
 def cmd_start():
     print("start")
