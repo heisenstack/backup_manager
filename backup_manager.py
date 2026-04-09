@@ -12,22 +12,22 @@ def log(message):
     with open(LOG_FILE, "a") as f:
         f.write(entry)
 
-def create(schedule):
+def cmd_create(schedule):
     print(f"create {schedule}")
 
-def list():
+def cmd_list():
     print("list")
 
-def delete(index):
+def cmd_delete(index):
     print(f"delete {index}")
 
-def start():
+def cmd_start():
     print("start")
 
-def stop():
+def cmd_stop():
     print("stop")
 
-def backups():
+def cmd_backups():
     print("backups")
 
 def main():
@@ -38,22 +38,28 @@ def main():
     command = sys.argv[1]
 
     if command == "create":
-            create(sys.argv[2])
+        if len(sys.argv) < 3:
+            print("Error: provide a schedule. Format: \"path;HH:MM;name\"")
+        else:
+            cmd_create(sys.argv[2])
 
     elif command == "list":
-        list()
+        cmd_list()
 
     elif command == "delete":
-            delete(sys.argv[2])
+        if len(sys.argv) < 3:
+            print("Error: provide an index number to delete.")
+        else:
+            cmd_delete(sys.argv[2])
 
     elif command == "start":
-        start()
+        cmd_start()
 
     elif command == "stop":
-        stop()
+        cmd_stop()
 
     elif command == "backups":
-        backups()
+        cmd_backups()
 
     else:
         log(f"Error: unknown command: {command}")
