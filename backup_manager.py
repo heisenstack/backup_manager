@@ -7,6 +7,7 @@ import subprocess
 LOGS_DIR = "./logs"
 LOG_FILE = os.path.join(LOGS_DIR, "backup_manager.log")
 SERVICE_SCRIPT = "backup_service.py"
+BACKUPS_DIR = "./backups"
 
 
 def log(message):
@@ -148,7 +149,19 @@ def cmd_stop():
         print(f"Error: can't stop backup_service: {e}")
 
 def cmd_backups():
-    print("backups")
+    try:
+        if not os.path.isdir(BACKUPS_DIR):
+            raise FileNotFoundError
+        files = [f for f in os.listdir(BACKUPS_DIR) if f.endswith(".tar")]
+        log("Show backups list")
+        if not files:
+            print("No backups found.")
+            return
+        for f in files:
+            print(f)
+    except FileNotFoundError:
+        log("Error: can't find backups directory")
+        print("Error: can't find backups directory")
 
 def main():
     if len(sys.argv) < 2:
