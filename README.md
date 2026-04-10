@@ -62,7 +62,6 @@ backup-manager/
 └── backups/                # Your .tar backup files end up here
 
 ## Notes
-
 - Schedules that have already run are automatically removed
 - The service checks schedules every 45 seconds
 - All errors are logged, the scripts won't crash on bad input
