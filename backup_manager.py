@@ -1,9 +1,13 @@
 import os
 import sys
 from datetime import datetime
+import subprocess
+
 
 LOGS_DIR = "./logs"
 LOG_FILE = os.path.join(LOGS_DIR, "backup_manager.log")
+SERVICE_SCRIPT = "backup_service.py"
+
 
 def log(message):
     os.makedirs(LOGS_DIR, exist_ok=True)
@@ -95,10 +99,53 @@ def cmd_delete(index_str):
         print("Error: can't find backup_schedules.txt")
 
 def cmd_start():
-    print("start")
+    pid_file = os.path.join(LOGS_DIR, "backup_service.pid")
+
+    # Check if already running
+    if os.path.exists(pid_file):
+        with open(pid_file, "r") as f:
+            old_pid = f.read().strip()
+        if old_pid and os.path.exists(f"/proc/{old_pid}"):
+            log("Error: backup_service already running")
+            print("Error: backup_service already running")
+            return
+
+    try:
+        proc = subprocess.Popen(
+            [sys.executable, SERVICE_SCRIPT],
+            start_new_session=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        os.makedirs(LOGS_DIR, exist_ok=True)
+        with open(pid_file, "w") as f:
+            f.write(str(proc.pid))
+        log("backup_service started")
+        print(f"backup_service started (PID {proc.pid})")
+    except Exception as e:
+        log(f"Error: could not start backup_service: {e}")
+        print(f"Error: could not start backup_service: {e}")
 
 def cmd_stop():
-    print("stop")
+    pid_file = os.path.join(LOGS_DIR, "backup_service.pid")
+
+    try:
+        with open(pid_file, "r") as f:
+            pid = int(f.read().strip())
+        os.kill(pid, 9)
+        os.remove(pid_file)
+        log("backup_service stopped")
+        print("backup_service stopped.")
+    except FileNotFoundError:
+        log("Error: can't stop backup_service")
+        print("Error: can't stop backup_service (no PID file found)")
+    except ProcessLookupError:
+        os.remove(pid_file)
+        log("Error: can't stop backup_service")
+        print("Error: backup_service was not running.")
+    except Exception as e:
+        log(f"Error: can't stop backup_service: {e}")
+        print(f"Error: can't stop backup_service: {e}")
 
 def cmd_backups():
     print("backups")
