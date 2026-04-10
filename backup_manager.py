@@ -29,13 +29,11 @@ def log(message):
 
 def cmd_create(schedule):
     """Add a new schedule line to backup_schedules.txt."""
-    # Validate: must have exactly 3 non-empty parts separated by ";"
     parts = schedule.split(";")
     if len(parts) != 3 or any(p.strip() == "" for p in parts):
         log(f"Error: malformed schedule: {schedule}")
         return
 
-    # Validate time format HH:MM
     _, time_str, name = parts
     time_parts = time_str.strip().split(":")
     if len(time_parts) != 2 or not all(p.isdigit() for p in time_parts):
@@ -135,6 +133,10 @@ def cmd_stop():
 def cmd_backups():
     """List all .tar files in the backups directory."""
     log("Show backups list")
+    # if not os.path.exists(BACKUPS_DIR):
+    #     log("Error: can't find backups directory")
+    #     return
+    # os.makedirs(BACKUPS_DIR, exist_ok=True)
     try:
         files = os.listdir(BACKUPS_DIR)
         tar_files = [f for f in files if f.endswith(".tar")]
